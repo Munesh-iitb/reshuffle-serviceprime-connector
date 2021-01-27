@@ -1,61 +1,72 @@
-import { Reshuffle, BaseConnector, EventConfiguration } from 'reshuffle-base-connector'
-
-export interface _CONNECTOR_NAME_ConnectorConfigOptions {
-  var1: string
-  // ...
+import fetch from 'node-fetch'
+import { BaseConnector, Reshuffle } from 'reshuffle-base-connector'
+export type ServicePrimeEvent = 'CreateNewTSR' | 'GetallTSR' | 'UpdateTSR'
+interface SPTicket {
+  title: string
+  requestedBy: string
+  location?: string
+  priority?: number
+  severity?: string
+  impact?: string
+  actualHours: string
+  resolutionComments?: string
+  glCode?: string
+  department: string
+  private: boolean
+  requestType: string
+  description: string
+  desiredCompletionDate: Date
+  relatedAsset?: string
+  businessManagerUser: string
+  requestSource?: string
+  resolvedOnInitialCall?: string
+  attachments?: string
+  tenantID: string
+  comments: string
 }
 
-export interface _CONNECTOR_NAME_ConnectorEventOptions {
-  option1?: string
-  // ...
-}
+type Options = Record<string, any>
 
-export default class _CONNECTOR_NAME_Connector extends BaseConnector<
-  _CONNECTOR_NAME_ConnectorConfigOptions,
-  _CONNECTOR_NAME_ConnectorEventOptions
-> {
-  // Your class variables
-  var1: string
-
-  constructor(app: Reshuffle, options?: _CONNECTOR_NAME_ConnectorConfigOptions, id?: string) {
+export class ServiceprimeConnector extends BaseConnector {
+  constructor(app: Reshuffle, private readonly options: Options = {}, id?: string) {
     super(app, options, id)
-    this.var1 = options?.var1 || 'initial value'
-    // ...
-  }
-
-  onStart(): void {
-    // If you need to do something specific on start, otherwise remove this function
-  }
-
-  onStop(): void {
-    // If you need to do something specific on stop, otherwise remove this function
-  }
-
-  // Your events
-  on(
-    options: _CONNECTOR_NAME_ConnectorEventOptions,
-    handler: any,
-    eventId: string,
-  ): EventConfiguration {
-    if (!eventId) {
-      eventId = `_CONNECTOR_NAME_/${options.option1}/${this.id}`
+    // a016b76...
+    if (typeof options.bearerToken !== 'string' || options.bearerToken.length === 0) {
+      throw new Error('Invalid bearerToken in options')
     }
-    const event = new EventConfiguration(eventId, this, options)
-    this.eventConfigurations[event.id] = event
-
-    this.app.when(event, handler)
-
-    return event
+    // localhost:44300 or Base Url
+    if (typeof options.server !== 'string' || options.server.length === 0) {
+      throw new Error('Invalid server in options')
+    }
   }
 
-  // Your actions
-  action1(bar: string): void {
-    // Your implementation here
+  private async request(method: 'GET' | 'POST', path: string, body?: Record<string, any>) {
+    const res = await fetch(`https://${this.options.server}/api/module/${path}`, {
+      method,
+      headers: {
+        Authorization: `Bearer ${this.options.bearerToken}`,
+        'Content-Type': 'application/json',
+      },
+      ...(body ? { body: JSON.stringify(body) } : {}),
+    })
+
+    if (res.status !== 200) {
+      throw new Error(`Serviceprime API error ${res.status}`)
+    }
+
+    const reply = await res.json()
+    return reply
   }
 
-  action2(foo: string): void {
-    // Your implementation here
+  // Actions ////////////////////////////////////////////////////////
+
+  public async NewTicket(ticket: SPTicket) {
+    return this.request('POST', 'newrecord', ticket)
+  }
+  public async UpddateTicket(ticket: SPTicket) {
+    return this.request('POST', 'newticket', ticket)
+  }
+  public async GetallTicket(ticket: SPTicket) {
+    return this.request('GET', 'newticket', ticket)
   }
 }
-
-export { _CONNECTOR_NAME_Connector }
