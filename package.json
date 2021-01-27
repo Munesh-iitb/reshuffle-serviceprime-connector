@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/reshufflehq/reshuffle-serviceprime-connector#readme",
   "dependencies": {
+    "@types/node-fetch": "^2.5.8",
     "reshuffle": "^1.0.8",
     "reshuffle-base-connector": "^0.0.11"
   },
