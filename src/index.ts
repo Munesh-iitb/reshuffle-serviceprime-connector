@@ -66,4 +66,7 @@ export class ServiceprimeConnector extends BaseConnector {
   public async UpddateTicket(ticket: SPTicket) {
     return this.request('POST', 'newticket', ticket)
   }
+  public async GetallTicket(ticket: SPTicket) {
+    return this.request('GET', 'newticket', ticket)
+  }
 }
