@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 import { BaseConnector, Reshuffle } from 'reshuffle-base-connector'
-export type ServicePrimeEvent = 'CreateNewTSR' | 'GetallTSR' | 'UpdateTSR'
+export type ServicePrimeEvent = 'GetTicket'
 interface SPTicket {
   title: string
   requestedBy: string
@@ -35,8 +35,9 @@ export class ServiceprimeConnector extends BaseConnector {
       throw new Error('Invalid bearerToken in options')
     }
     // localhost:44300 or Base Url
-    if (typeof options.server !== 'string' || options.server.length === 0) {
-      throw new Error('Invalid server in options')
+    const match = options.server.match(/^(https:\/\/[\w-]+(\.[\w-]+)*(:\d{1,5})?)\/?$/)
+    if (typeof options.server !== 'string' || options.server.length === 0 || !match) {
+      throw new Error('Invalid BaseUrl in options')
     }
   }
 
@@ -60,13 +61,13 @@ export class ServiceprimeConnector extends BaseConnector {
 
   // Actions ////////////////////////////////////////////////////////
 
-  public async NewTicket(ticket: SPTicket) {
-    return this.request('POST', 'newrecord', ticket)
-  }
-  public async UpddateTicket(ticket: SPTicket) {
-    return this.request('POST', 'newticket', ticket)
-  }
-  public async GetallTicket(ticket: SPTicket) {
-    return this.request('GET', 'newticket', ticket)
+  // public async NewTicket(ticket: SPTicket) {
+  //   return this.request('POST', 'newrecord', ticket)
+  // }
+  // public async UpddateTicket(ticket: SPTicket) {
+  //   return this.request('POST', 'newticket', ticket)
+  // }
+  public async GetTicket(ticket: SPTicket) {
+    return this.request('GET', 'path', ticket)
   }
 }
