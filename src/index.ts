@@ -35,8 +35,7 @@ export class ServiceprimeConnector extends BaseConnector {
       throw new Error('Invalid bearerToken in options')
     }
     // localhost:44300 or Base Url
-    const match = options.server.match(/^(https:\/\/[\w-]+(\.[\w-]+)*(:\d{1,5})?)\/?$/)
-    if (typeof options.server !== 'string' || options.server.length === 0 || !match) {
+    if (typeof options.server !== 'string' || options.server.length === 0) {
       throw new Error('Invalid BaseUrl in options')
     }
   }
