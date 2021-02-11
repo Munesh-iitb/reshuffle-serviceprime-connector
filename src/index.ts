@@ -1,29 +1,28 @@
 import fetch from 'node-fetch'
 import { BaseConnector, Reshuffle } from 'reshuffle-base-connector'
-export type ServicePrimeEvent = 'GetTicket'
-interface SPTicket {
-  title: string
-  requestedBy: string
-  location?: string
-  priority?: number
-  severity?: string
-  impact?: string
-  actualHours: string
-  resolutionComments?: string
-  glCode?: string
-  department: string
-  private: boolean
-  requestType: string
-  description: string
-  desiredCompletionDate: Date
-  relatedAsset?: string
-  businessManagerUser: string
-  requestSource?: string
-  resolvedOnInitialCall?: string
-  attachments?: string
-  tenantID: string
-  comments: string
-}
+// interface SPTicket {
+//   title: string
+//   requestedBy: string
+//   location?: string
+//   priority?: number
+//   severity?: string
+//   impact?: string
+//   actualHours: string
+//   resolutionComments?: string
+//   glCode?: string
+//   department: string
+//   private: boolean
+//   requestType: string
+//   description: string
+//   desiredCompletionDate: Date
+//   relatedAsset?: string
+//   businessManagerUser: string
+//   requestSource?: string
+//   resolvedOnInitialCall?: string
+//   attachments?: string
+//   tenantID: string
+//   comments: string
+// }
 
 type Options = Record<string, any>
 
@@ -40,14 +39,16 @@ export class ServiceprimeConnector extends BaseConnector {
     }
   }
 
-  private async request(method: 'GET' | 'POST', path: string, body?: Record<string, any>) {
-    const res = await fetch(`https://${this.options.server}/api/module/${path}`, {
+  private async request(method: 'GET', path: string, body?: string) {
+    console.log(this.options.server)
+    console.log(path)
+    const res = await fetch(`https://${this.options.server}/API/module/Record/TSR-21-000873`, {
       method,
       headers: {
-        Authorization: `Bearer ${this.options.bearerToken}`,
+        'Authorization': `bearer ${this.options.bearerToken}`,
         'Content-Type': 'application/json',
       },
-      ...(body ? { body: JSON.stringify(body) } : {}),
+      ...(body ? { body } : {}),
     })
 
     if (res.status !== 200) {
@@ -66,7 +67,10 @@ export class ServiceprimeConnector extends BaseConnector {
   // public async UpddateTicket(ticket: SPTicket) {
   //   return this.request('POST', 'newticket', ticket)
   // }
-  public async GetTicket(ticket: SPTicket) {
-    return this.request('GET', 'path', ticket)
+  // public async GetTicket(ticket: SPTicket) {
+  //   return this.request('GET', 'path', ticket)
+  // }
+  public async GetTicket() {
+    return this.request('GET','/TSR-21-000873')
   }
 }
