@@ -71,6 +71,6 @@ export class ServiceprimeConnector extends BaseConnector {
   //   return this.request('GET', 'path', ticket)
   // }
   public async GetTicket() {
-    return this.request('GET','/TSR-21-000873')
+    return this.request('GET','path')
   }
 }
