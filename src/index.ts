@@ -41,8 +41,7 @@ export class ServiceprimeConnector extends BaseConnector {
 
   private async request(method: 'GET', path: string, body?: string) {
     console.log(this.options.server)
-    console.log(path)
-    const res = await fetch(`https://${this.options.server}/API/module/Record/TSR-21-000873`, {
+    const res = await fetch(`https://${this.options.server}/API/module/Record/${path}`, {
       method,
       headers: {
         'Authorization': `bearer ${this.options.bearerToken}`,
